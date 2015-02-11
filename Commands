@@ -2,4 +2,114 @@ SET JAVA HOME:
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 
 
-Other common commands:   
+Other common commands:  
+General commands:
+heisenberg@ubuntu:~/nutch/runtime/local$ bin/nutch
+nutch 1.10-SNAPSHOT
+Usage: nutch COMMAND
+where COMMAND is one of:
+  readdb            read / dump crawl db
+  mergedb           merge crawldb-s, with optional filtering
+  readlinkdb        read / dump link db
+  inject            inject new urls into the database
+  generate          generate new segments to fetch from crawl db
+  freegen           generate new segments to fetch from text files
+  fetch             fetch a segment's pages
+  parse             parse a segment's pages
+  readseg           read / dump segment data
+  mergesegs         merge several segments, with optional filtering and slicing
+  updatedb          update crawl db from segments after fetching
+  invertlinks       create a linkdb from parsed segments
+  mergelinkdb       merge linkdb-s, with optional filtering
+  index             run the plugin-based indexer on parsed segments and linkdb
+  dedup             deduplicate entries in the crawldb and give them a special status
+  dump              exports cralwed data from segments into files
+  solrindex         run the solr indexer on parsed segments and linkdb - DEPRECATED use the index command instead
+  solrdedup         remove duplicates from solr - DEPRECATED use the dedup command instead
+  solrclean         remove HTTP 301 and 404 documents from solr - DEPRECATED use the clean command instead
+  clean             remove HTTP 301 and 404 documents and duplicates from indexing backends configured via plugins
+  parsechecker      check the parser for a given url
+  indexchecker      check the indexing filters for a given url
+  domainstats       calculate domain statistics from crawldb
+  webgraph          generate a web graph from existing segments
+  linkrank          run a link analysis program on the generated web graph
+  scoreupdater      updates the crawldb with linkrank scores
+  nodedumper        dumps the web graph's node scores
+  plugin            load a plugin and run one of its classes main()
+  junit             runs the given JUnit test
+ or
+  CLASSNAME         run the class named CLASSNAME
+Most commands print help when invoked w/o parameters.
+
+
+READDB:
+heisenberg@ubuntu:~/nutch/runtime/local$ bin/nutch readdb
+Usage: CrawlDbReader <crawldb> (-stats | -dump <out_dir> | -topN <nnnn> <out_dir> [<min>] | -url <url>)
+	<crawldb>	directory name where crawldb is located
+	-stats [-sort] 	print overall statistics to System.out
+		[-sort]	list status sorted by host
+	-dump <out_dir> [-format normal|csv|crawldb]	dump the whole db to a text file in <out_dir>
+		[-format csv]	dump in Csv format
+		[-format normal]	dump in standard format (default option)
+		[-format crawldb]	dump as CrawlDB
+		[-regex <expr>]	filter records with expression
+		[-retry <num>]	minimum retry count
+		[-status <status>]	filter records by CrawlDatum status
+	-url <url>	print information on <url> to System.out
+	-topN <nnnn> <out_dir> [<min>]	dump top <nnnn> urls sorted by score to <out_dir>
+		[<min>]	skip records with scores below this value.
+			This can significantly improve performance.
+
+Commands on SEGMENT:
+
+mergesegs
+heisenberg@ubuntu:~/nutch/runtime/local$ bin/nutch mergesegs
+SegmentMerger output_dir (-dir segments | seg1 seg2 ...) [-filter] [-slice NNNN]
+	output_dir	name of the parent dir for output segment slice(s)
+	-dir segments	parent dir containing several segments
+	seg1 seg2 ...	list of segment dirs
+	-filter		filter out URL-s prohibited by current URLFilters
+	-normalize		normalize URL via current URLNormalizers
+	-slice NNNN	create many output segments, each containing NNNN URLs
+
+readseg
+heisenberg@ubuntu:~/nutch/runtime/local$ bin/nutch readseg
+Usage: SegmentReader (-dump ... | -list ... | -get ...) [general options]
+
+* General options:
+	-nocontent	ignore content directory
+	-nofetch	ignore crawl_fetch directory
+	-nogenerate	ignore crawl_generate directory
+	-noparse	ignore crawl_parse directory
+	-noparsedata	ignore parse_data directory
+	-noparsetext	ignore parse_text directory
+
+* SegmentReader -dump <segment_dir> <output> [general options]
+  Dumps content of a <segment_dir> as a text file to <output>.
+
+	<segment_dir>	name of the segment directory.
+	<output>	name of the (non-existent) output directory.
+
+* SegmentReader -list (<segment_dir1> ... | -dir <segments>) [general options]
+  List a synopsis of segments in specified directories, or all segments in
+  a directory <segments>, and print it on System.out
+
+	<segment_dir1> ...	list of segment directories to process
+	-dir <segments>		directory that contains multiple segments
+
+* SegmentReader -get <segment_dir> <keyValue> [general options]
+  Get a specified record from a segment, and print it on System.out.
+
+	<segment_dir>	name of the segment directory.
+	<keyValue>	value of the key (url).
+		Note: put double-quotes around strings with spaces.
+
+
+
+
+
+heisenberg@ubuntu:~/nutch/runtime/local$ bin/nutch readseg -list TestCrawlRun8Merge/20150210224001/
+NAME		GENERATED	FETCHER START		FETCHER END		FETCHEDPARSED
+20150210224001	436		2015-02-09T23:25:36	2015-02-10T00:08:37	435	380
+
+
