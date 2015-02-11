@@ -2,4 +2,4 @@ SET JAVA HOME:
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 
 
-Other common commands:
+Other common commands:   
